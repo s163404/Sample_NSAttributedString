@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoggingSettingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class LoggingSettingViewController: UIViewController {
 
     var label = UILabel()
     var button = UIButton()
@@ -58,7 +58,10 @@ class LoggingSettingViewController: UIViewController, UITableViewDataSource, UIT
         ])
     }
     
-    
+}
+
+// MEMO:- UITableView のデリケートメソッド
+extension LoggingSettingViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         // 選択肢UIと設定完了のセクション２つぶん
         return 2
