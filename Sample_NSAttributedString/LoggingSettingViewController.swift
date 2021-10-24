@@ -13,6 +13,8 @@ class LoggingSettingViewController: UIViewController, UITableViewDataSource, UIT
     var button = UIButton()
     var tableView = UITableView(frame: .zero, style: .grouped)
     
+    let horizontalMargin: CGFloat = 32.0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -28,6 +30,9 @@ class LoggingSettingViewController: UIViewController, UITableViewDataSource, UIT
         
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.isScrollEnabled = false
+        tableView.backgroundColor = .white
+        tableView.backgroundView?.backgroundColor = .systemPink
         
         view.addSubview(label)
         view.addSubview(button)
@@ -38,11 +43,11 @@ class LoggingSettingViewController: UIViewController, UITableViewDataSource, UIT
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
-            label.leftAnchor.constraint(equalTo: view.leftAnchor),
-            label.rightAnchor.constraint(equalTo: view.rightAnchor),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: horizontalMargin),
+            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -horizontalMargin),
             
             button.topAnchor.constraint(equalTo: label.bottomAnchor),
-            button.leftAnchor.constraint(equalTo: view.leftAnchor),
+            button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: horizontalMargin),
             button.heightAnchor.constraint(equalToConstant: 44),
             
             tableView.topAnchor.constraint(equalTo: button.bottomAnchor),
@@ -89,11 +94,18 @@ class LoggingSettingViewController: UIViewController, UITableViewDataSource, UIT
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let cell = tableView.cellForRow(at: indexPath)
-        
-        if let text = cell?.textLabel?.text {
-            print(text)
+        guard let cell = tableView.cellForRow(at: indexPath) else {
+            return
         }
+        switch indexPath.section {
+        case 0:
+            cell.accessoryType = .checkmark
 
+            let unselectedIndexPath = IndexPath(row: indexPath.row == 0 ? 1 : 0, section: 0)
+            tableView.cellForRow(at: unselectedIndexPath)?.accessoryType = .none
+            break
+        default:
+            break
+        }
     }
 }
