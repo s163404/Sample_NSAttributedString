@@ -56,6 +56,14 @@ class LoggingSettingViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
         ])
+        
+        self.navigationItem.title = "タイトル"
+        let cancelButtonItem = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(dismissAnimated))
+        self.navigationItem.leftBarButtonItem = cancelButtonItem
+    }
+    
+    @objc func dismissAnimated() {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }
