@@ -15,6 +15,8 @@ class LoggingSettingViewController: UIViewController {
     
     let horizontalMargin: CGFloat = 32.0
     
+    var painterName: String?
+    let userDefaultsKey = "testKey"
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -25,14 +27,13 @@ class LoggingSettingViewController: UIViewController {
         label.lineBreakMode = .byWordWrapping
         label.layer.borderColor = UIColor.gray.cgColor
         label.layer.borderWidth = 0.5
-        button.setTitle("プライバシーポリシー", for: .normal)
+        button.setTitle("UserDefaults ロード", for: .normal)
         button.setTitleColor(.link, for: .normal)
+        button.addTarget(self, action: #selector(tappedLinkButton), for: .touchUpInside)
         
         tableView.delegate = self
         tableView.dataSource = self
         tableView.isScrollEnabled = false
-        tableView.backgroundColor = .white
-        tableView.backgroundView?.backgroundColor = .systemPink
         
         view.addSubview(label)
         view.addSubview(button)
@@ -66,6 +67,18 @@ class LoggingSettingViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    @objc func tappedLinkButton() {
+        print(loadFromUserDefaults(key: userDefaultsKey) ?? "nil")
+    }
+    
+    private func loadFromUserDefaults(key: String) -> String? {
+        let value = UserDefaults.standard.object(forKey: key) as? String
+        return value
+    }
+    
+    private func setUserDefaults(value: String, key: String) {
+        UserDefaults.standard.set(value, forKey: key)
+    }
 }
 
 // MEMO:- UITableView のデリケートメソッド
@@ -88,8 +101,14 @@ extension LoggingSettingViewController: UITableViewDelegate, UITableViewDataSour
         case 0:
             if indexPath.row == 0 {
                 cell.textLabel?.text = "ミケランジェロ・ブオナローティ"
+                if loadFromUserDefaults(key: userDefaultsKey) == cell.textLabel!.text {
+                    cell.accessoryType = .checkmark
+                }
             } else {
                 cell.textLabel?.text = "ミケランジェロ・メリージ・ダ・カラヴァッジョ"
+                if loadFromUserDefaults(key: userDefaultsKey) == cell.textLabel!.text {
+                    cell.accessoryType = .checkmark
+                }
             }
             break
         case 1:
@@ -114,7 +133,17 @@ extension LoggingSettingViewController: UITableViewDelegate, UITableViewDataSour
 
             let unselectedIndexPath = IndexPath(row: indexPath.row == 0 ? 1 : 0, section: 0)
             tableView.cellForRow(at: unselectedIndexPath)?.accessoryType = .none
+            
+            painterName = cell.textLabel!.text
+            print(painterName)
             break
+        case 1:
+            if let painterName = painterName {
+                self.setUserDefaults(value: painterName, key: userDefaultsKey)
+                print("登録: \((loadFromUserDefaults(key: userDefaultsKey) ?? "nil"))")
+            }
+            self.dismissAnimated()
+
         default:
             break
         }
